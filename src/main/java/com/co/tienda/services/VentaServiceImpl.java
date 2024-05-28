@@ -14,9 +14,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.*;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 @Service
 public class VentaServiceImpl implements VentaService {
 
@@ -66,8 +73,8 @@ public class VentaServiceImpl implements VentaService {
                 ((ProductoService) productoService).updateCantidad(producto.getProductoid(), producto.getCantidad());
                
                 Venta venta = new Venta();
-                venta.setProductoId(productoId);
-                venta.setCantidadVendida(cantidadVendida);
+                venta.setProductoId(producto.getProductoid());
+                venta.setCantidadVendida(producto.getCantidad());
                 venta.setPrecioUnitario(producto.getPrecioUnitario());
                 venta.setPrecioTotal(producto.getPrecioUnitario() * cantidadVendida);
                 venta.setFecha(null); 
@@ -80,6 +87,7 @@ public class VentaServiceImpl implements VentaService {
         throw new Exception("Producto no encontrado con ID: " + productoId);
     }
 
+
     @Override
     @Transactional(readOnly = false, propagation = Propagation.REQUIRED)
     public void deleteVenta (Long id) throws Exception{
@@ -90,4 +98,20 @@ public class VentaServiceImpl implements VentaService {
         ventaRepository.delete(venta);
 
     }
+
+    public byte[] exportPdf() throws JRException {
+        List<Venta> vents = ventaRepository.findAll();
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(vents);
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("createdBy", "Spring Boot");
+
+        JasperReport report = JasperCompileManager.compileReport(
+                getClass().getResourceAsStream("/informes/ventas.jrxml"));
+        JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, dataSource);
+        return JasperExportManager.exportReportToPdf(jasperPrint);
+    }
+
+
+
 }

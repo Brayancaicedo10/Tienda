@@ -109,11 +109,10 @@ public class ProductoServiceImpl implements ProductoService {
         }
     }
 
-    private int getCantidadVendida(Producto producto) {
 
+    private int getCantidadVendida(Producto producto) {
         throw new UnsupportedOperationException("Unimplemented method 'getCantidadVendida'");
     }
-
 
     public byte[] exportPdf() throws JRException {
         List<Producto> products = productoRepository.findAll();
@@ -127,7 +126,7 @@ public class ProductoServiceImpl implements ProductoService {
         JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, dataSource);
         return JasperExportManager.exportReportToPdf(jasperPrint);
     }
-    
+
     
 
    
