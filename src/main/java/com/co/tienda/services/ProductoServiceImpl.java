@@ -8,6 +8,14 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
 @Service
 public class ProductoServiceImpl implements ProductoService {
     private final ProductoRepository productoRepository;
@@ -107,6 +115,18 @@ public class ProductoServiceImpl implements ProductoService {
     }
 
 
+    public byte[] exportPdf() throws JRException {
+        List<Producto> products = productoRepository.findAll();
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(products);
+
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("createdBy", "Spring Boot");
+
+        JasperReport report = JasperCompileManager.compileReport(
+                getClass().getResourceAsStream("/informes/productos.jrxml"));
+        JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, dataSource);
+        return JasperExportManager.exportReportToPdf(jasperPrint);
+    }
     
     
 

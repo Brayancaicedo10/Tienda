@@ -2,6 +2,9 @@ package com.co.tienda.services;
 
 import com.co.tienda.models.Producto;
 import java.util.List;
+import net.sf.jasperreports.engine.JRException;
+
+
 
 public interface ProductoService {
 
@@ -21,5 +24,5 @@ public interface ProductoService {
 
 
     void updateCantidad(Long id, int cantidad) throws Exception;
-
+     byte[] exportPdf() throws JRException;
 }
