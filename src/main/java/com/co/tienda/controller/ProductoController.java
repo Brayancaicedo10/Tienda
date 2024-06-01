@@ -116,7 +116,7 @@ public class ProductoController {
             model.addAttribute("mensaje", "Producto se ha eliminado correctamente");
         } catch (Exception e) {
             model.addAttribute("clase", "danger");
-            model.addAttribute("mensaje", "Producto no se ha eliminado correctamente");
+            model.addAttribute("mensaje", "Prueba");
         }
 
         return "redirect:/productos/";
